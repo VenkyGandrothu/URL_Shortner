@@ -17,12 +17,17 @@ public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "long_url")
+    @Column(name = "long_url", nullable = false, length = 2048)
     private String longUrl;
-    @Column(name = "short_url")
-    private String shortUrl;
+    @Column(name = "short_code", nullable = false, unique = true, length = 10)
+    private String shortCode;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Column(name = "expiration_date")
+    private LocalDateTime expirationDate;
+    @Column(name = "click_count")
+    private Long clickCount = 0L;
+
 }
