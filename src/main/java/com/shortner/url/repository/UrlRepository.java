@@ -11,6 +11,5 @@ import com.shortner.url.entity.Url;
 public interface UrlRepository extends JpaRepository<Url, Long> {
 
     Optional<Url> findByShortCode(String shortCode);
-
     Optional<Url> findByLongUrl(String longUrl);
 }

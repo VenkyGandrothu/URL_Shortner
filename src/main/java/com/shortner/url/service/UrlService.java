@@ -18,7 +18,14 @@ public class UrlService {
     }
 
     public Url createUrl(Url url) {
-        return urlRepository.save(url);
+        Url savedUrl = urlRepository.save(url);
+
+        String shortCode = generateShortCode(savedUrl.getId());
+
+        savedUrl.setShortCode(shortCode);
+        savedUrl.setCreatedAt(LocalDateTime.now());
+        savedUrl.setUpdatedAt(LocalDateTime.now());
+        return urlRepository.save(savedUrl);
     }
 
     public Optional<Url> findByShortCode(String shortCode) {
@@ -29,14 +36,27 @@ public class UrlService {
         return urlRepository.findByLongUrl(longUrl);
     }
 
-    public Url createUrl(String longUrl){
-        String shortCode = generateShortCode(longUrl);
-        Url url = new Url();
-        url.setLongUrl(longUrl);
-        url.setShortCode(shortCode);
-        url.setCreatedAt(LocalDateTime.now());
-        url.setUpdatedAt(LocalDateTime.now());
-        return urlRepository.save(url);
+    public String generateShortCode(Long urlId){
+        return base62Encode(urlId);
+    }
+
+    //short code genaration functionality
+    private static final String BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private String base62Encode(Long number){
+        if(number == null || number < 0){
+            throw new IllegalArgumentException("id must be a non-negative number");
+        }
+        if(number == 0){
+            return "0";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(number > 0){
+            int remainder = (int) (number % 62);
+            sb.append(BASE62.charAt(remainder));
+            number = number / 62;
+        }
+        return sb.reverse().toString();
     }
 
 }

@@ -26,7 +26,7 @@ public class Url {
     private Long id;
     @Column(name = "long_url", nullable = false, length = 2048)
     private String longUrl;
-    @Column(name = "short_code", nullable = false, unique = true, length = 10)
+    @Column(name = "short_code", nullable = true, unique = true, length = 10)
     private String shortCode;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
