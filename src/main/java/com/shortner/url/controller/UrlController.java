@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shortner.url.dto.LongUrlResponseDTO;
 import com.shortner.url.entity.Url;
 import com.shortner.url.service.UrlService;
 
@@ -32,10 +33,8 @@ public class UrlController {
     }
 
     @GetMapping("/{shortCode}")
-    public ResponseEntity<Url> getByShortCode(@PathVariable String shortCode) {
-        Optional<Url> url = urlService.findByShortCode(shortCode);
-        return url.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public LongUrlResponseDTO getByShortCode(@PathVariable String shortCode) {
+        return urlService.findByShortCode(shortCode);
     }
 
     @GetMapping

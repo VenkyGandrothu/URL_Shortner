@@ -5,8 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.shortner.url.dto.LongUrlResponseDTO;
 import com.shortner.url.entity.Url;
 import com.shortner.url.repository.UrlRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UrlService {
@@ -17,19 +20,25 @@ public class UrlService {
         this.urlRepository = urlRepository;
     }
 
+
+    @Transactional
     public Url createUrl(Url url) {
+        url.setCreatedAt(LocalDateTime.now());
+        url.setUpdatedAt(LocalDateTime.now());
         Url savedUrl = urlRepository.save(url);
 
         String shortCode = generateShortCode(savedUrl.getId());
 
         savedUrl.setShortCode(shortCode);
-        savedUrl.setCreatedAt(LocalDateTime.now());
-        savedUrl.setUpdatedAt(LocalDateTime.now());
         return urlRepository.save(savedUrl);
     }
 
-    public Optional<Url> findByShortCode(String shortCode) {
-        return urlRepository.findByShortCode(shortCode);
+    public LongUrlResponseDTO findByShortCode(String shortCode) {
+         Url urlobj = urlRepository.findByShortCode(shortCode).orElseThrow(() -> new RuntimeException("Short code not found"));;
+         LongUrlResponseDTO longUrlResponseDTO = new LongUrlResponseDTO();
+         longUrlResponseDTO.setId(urlobj.getId());
+         longUrlResponseDTO.setLongUrl(urlobj.getLongUrl());
+         return longUrlResponseDTO;
     }
 
     public Optional<Url> findByLongUrl(String longUrl) {
@@ -40,7 +49,7 @@ public class UrlService {
         return base62Encode(urlId);
     }
 
-    //short code genaration functionality
+    //short code generation functionality
     private static final String BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private String base62Encode(Long number){
         if(number == null || number < 0){
