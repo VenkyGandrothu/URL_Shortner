@@ -23,6 +23,16 @@ public class UrlService {
 
     @Transactional
     public Url createUrl(Url url) {
+
+        // 1) Ask DB: does this long URL already exist?
+        Optional<Url> existing = urlRepository.findByLongUrl(url.getLongUrl());
+
+        // 2) If yes → don't save again, return the existing row
+        if(existing.isPresent()){
+            return existing.get();
+        }
+
+        // 3) If no → create as you do now
         url.setCreatedAt(LocalDateTime.now());
         url.setUpdatedAt(LocalDateTime.now());
         Url savedUrl = urlRepository.save(url);
