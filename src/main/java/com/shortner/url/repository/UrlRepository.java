@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.shortner.url.entity.Url;
 
 @Repository
-public interface UrlRepo extends JpaRepository<Url,Long> {
-    
-    Optional<Url> findByShortUrl(String shortUrl);
-    Optional<Url> findByLongUrl(String longUrl);
+public interface UrlRepository extends JpaRepository<Url, Long> {
 
+    Optional<Url> findByShortCode(String shortCode);
+
+    Optional<Url> findByLongUrl(String longUrl);
 }
