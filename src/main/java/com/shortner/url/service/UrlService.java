@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shortner.url.dto.LongUrlResponseDTO;
 import com.shortner.url.entity.Url;
+import com.shortner.url.exception.ResourceNotFoundException;
 import com.shortner.url.repository.UrlRepository;
 
 import jakarta.transaction.Transactional;
@@ -44,7 +45,7 @@ public class UrlService {
     }
 
     public LongUrlResponseDTO findByShortCode(String shortCode) {
-         Url urlobj = urlRepository.findByShortCode(shortCode).orElseThrow(() -> new RuntimeException("Short code not found"));;
+         Url urlobj = urlRepository.findByShortCode(shortCode).orElseThrow(() -> new ResourceNotFoundException("Short code not found: " + shortCode));;
          LongUrlResponseDTO longUrlResponseDTO = new LongUrlResponseDTO();
          longUrlResponseDTO.setId(urlobj.getId());
          longUrlResponseDTO.setLongUrl(urlobj.getLongUrl());

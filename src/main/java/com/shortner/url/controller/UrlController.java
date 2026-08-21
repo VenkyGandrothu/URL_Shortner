@@ -16,6 +16,8 @@ import com.shortner.url.dto.LongUrlResponseDTO;
 import com.shortner.url.entity.Url;
 import com.shortner.url.service.UrlService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/urls")
 public class UrlController {
@@ -27,7 +29,7 @@ public class UrlController {
     }
 
     @PostMapping
-    public ResponseEntity<Url> createUrl(@RequestBody Url url) {
+    public ResponseEntity<Url> createUrl(@Valid @RequestBody Url url) {
         Url savedUrl = urlService.createUrl(url);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUrl);
     }
