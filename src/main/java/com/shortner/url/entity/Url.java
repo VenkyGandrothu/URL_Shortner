@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Index;
 
 
 @Getter
@@ -20,7 +21,10 @@ import jakarta.persistence.Column;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "urls")
+@Table(name = "urls",     indexes = {
+    @Index(name = "idx_urls_short_code", columnList = "short_code", unique = true),
+    @Index(name = "idx_urls_long_url", columnList = "long_url")
+})
 public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
