@@ -16,6 +16,8 @@ logs/
 application-local.properties
 application-local.yml
 application-local.yaml
+src/main/resources/application.properties
+!src/main/resources/application.properties.example
 
 ### STS ###
 .apt_generated
