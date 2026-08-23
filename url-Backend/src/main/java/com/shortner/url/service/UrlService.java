@@ -2,6 +2,7 @@ package com.shortner.url.service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -33,16 +34,24 @@ public class UrlService {
             return new CreateUrlResult(existing.get(), false);
         }
 
-        // 3) If no → create new row; created=true → controller returns 201
+        // 3) Create row — DB may still require short_code NOT NULL, so use a temp code first
         url.setCreatedAt(LocalDateTime.now());
         url.setUpdatedAt(LocalDateTime.now());
-        Url savedUrl = urlRepository.save(url);
+        url.setClickCount(0L);
+        url.setShortCode(temporaryShortCode());
 
-        String shortCode = generateShortCode(savedUrl.getId());
-        savedUrl.setShortCode(shortCode);
+        Url savedUrl = urlRepository.saveAndFlush(url);
+
+        // 4) Replace temp code with Base62(id)
+        savedUrl.setShortCode(generateShortCode(savedUrl.getId()));
         Url finalUrl = urlRepository.save(savedUrl);
 
         return new CreateUrlResult(finalUrl, true);
+    }
+
+    /** Unique placeholder so the first INSERT satisfies NOT NULL on short_code. */
+    private String temporaryShortCode() {
+        return "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 9);
     }
 
     public LongUrlResponseDTO findByShortCode(String shortCode) {
