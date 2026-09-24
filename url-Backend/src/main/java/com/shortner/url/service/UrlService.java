@@ -12,6 +12,10 @@ import com.shortner.url.entity.Url;
 import com.shortner.url.exception.ResourceNotFoundException;
 import com.shortner.url.repository.UrlRepository;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.CacheEvict;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -54,6 +58,7 @@ public class UrlService {
         return "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 9);
     }
 
+    @Cacheable(value = "shortCode" , key = "#shortCode")
     public LongUrlResponseDTO findByShortCode(String shortCode) {
          Url urlobj = urlRepository.findByShortCode(shortCode).orElseThrow(() -> new ResourceNotFoundException("Short code not found: " + shortCode));
          LongUrlResponseDTO longUrlResponseDTO = new LongUrlResponseDTO();
@@ -61,6 +66,8 @@ public class UrlService {
          longUrlResponseDTO.setLongUrl(urlobj.getLongUrl());
          return longUrlResponseDTO;
     }
+
+    
 
     public Optional<Url> findByLongUrl(String longUrl) {
         return urlRepository.findByLongUrl(longUrl);
