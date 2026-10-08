@@ -67,8 +67,6 @@ public class UrlService {
          return longUrlResponseDTO;
     }
 
-    
-
     public Optional<Url> findByLongUrl(String longUrl) {
         return urlRepository.findByLongUrl(longUrl);
     }
