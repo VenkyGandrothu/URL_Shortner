@@ -47,6 +47,7 @@ public class UrlController {
     @GetMapping("/{shortCode}")
     public ResponseEntity<Url> redirectToLongUrl(@PathVariable String shortCode) {
         LongUrlResponseDTO longUrlResponseDTO = urlService.findByShortCode(shortCode);
+        urlService.recordClick(shortCode);
 
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, longUrlResponseDTO.getLongUrl()).build();
     }

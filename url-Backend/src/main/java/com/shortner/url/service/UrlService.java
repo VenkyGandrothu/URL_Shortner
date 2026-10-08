@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.shortner.url.dto.CreateUrlResult;
@@ -22,9 +23,11 @@ import jakarta.transaction.Transactional;
 public class UrlService {
 
     private final UrlRepository urlRepository;
+    private final StringRedisTemplate stringRedisTemplate;
 
-    public UrlService(UrlRepository urlRepository) {
+    public UrlService(UrlRepository urlRepository, StringRedisTemplate stringRedisTemplate) {
         this.urlRepository = urlRepository;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Transactional
@@ -65,6 +68,11 @@ public class UrlService {
          longUrlResponseDTO.setId(urlobj.getId());
          longUrlResponseDTO.setLongUrl(urlobj.getLongUrl());
          return longUrlResponseDTO;
+    }
+
+    /** Counts a redirect in Redis. Does not write urls.click_count. */
+    public void recordClick(String shortCode) {
+        stringRedisTemplate.opsForValue().increment("clicks::" + shortCode);
     }
 
     public Optional<Url> findByLongUrl(String longUrl) {
